@@ -23,9 +23,10 @@ function plotting_midpoint_step
     
     end
     
-    xlabel('Time', 'Interpreter', 'Latex', 'FontSize', 15);
-    ylabel('x(t)', 'Interpreter', 'Latex', 'FontSize', 15);
-    title('Explicit Midpoint', 'Interpreter', 'Latex', 'FontSize', 20);
+    xlabel('Time (-)', 'Interpreter', 'Latex', 'FontSize', 15);
+    ylabel('x(t) (-)', 'Interpreter', 'Latex', 'FontSize', 15);
+    title('Explicit Midpoint Example Integration Plot', ...
+        'Interpreter', 'Latex', 'FontSize', 20);
     legend('Exact',...
         'h = 0.4',...
         'h = 0.2', 'Interpreter', 'Latex', 'Location', 'Best', 'Fontsize', 15);
