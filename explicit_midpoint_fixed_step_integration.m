@@ -12,5 +12,27 @@
 %num_evals: total number of calls made to rate_func_in during the integration
 function [t_list,X_list,h_avg, num_evals] = ...
 explicit_midpoint_fixed_step_integration(rate_func_in,tspan,X0,h_ref)
-%your code here
+    t0 = tspan(1);
+    tf = tspan(2);
+    
+    N = 1;
+    while (tf - t0)/N > h_ref
+        N = N + 1;
+    end
+    
+    h_avg = (tf - t0)/N;
+    t_list = linspace(t0,tf,N+1)';
+    
+    X_list = zeros(N+1,length(X0));
+    X_list(1,:) = X0(:)';
+    
+    num_evals = 0;
+    
+    for i = 1:N
+        XA = X_list(i,:)';
+        [XB,evals] = forward_euler_step(rate_func_in,t_list(i),XA,h_avg);
+        X_list(i+1,:) = XB(:)';
+        num_evals = num_evals + evals;
+    end
+    
 end
