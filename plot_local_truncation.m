@@ -1,0 +1,94 @@
+function plot_local_truncation
+    % Plotting parameters
+    h_list = logspace(10e-5, 10, 100);
+    tspan = [0 10];
+    X0 = 1;
+    t_ex = 0.492;
+
+    % Initialize variables for loop
+    error_list_euler = zeros(size(h_list));
+    global_truncation_euler = zeros(size(h_list));
+    error_list_midpoint = zeros(size(h_list));
+    global_truncation_midpoint = zeros(size(h_list));
+    num_evals_euler = 0;
+    num_evals_midpoint = 0;
+    p_euler = zeros(size(h_list));
+    p_midpoint = zeros(size(h_list));
+
+
+    % Find truncation for euler step
+    % Cycle through h values
+    for i = 1:length(h_list)
+        [G, num_evals] = forward_euler_step(@rate_func01,t_ex,X0,h_list(i)); % run euler step
+        X_euler = rate_func01(t_ex+h_list(i), X0); % calculate X(t+h)
+        local_error = norm(G-X_euler); % calculate error for local truncation
+        error_list_euler(i) = local_error;
+        num_evals_euler = num_evals_euler+num_evals; % track number of evals
+        global_truncation_euler(i) = sum(error_list_euler); % sum error list for global truncation
+
+        % Calculate p
+        order = log10(h_list(i));
+        p_euler(i) = log(local_error/order)/log(h_list(i));
+    end
+    p_euler
+    mean(p_euler)
+
+    mdl_local_euler = polyfit(log(h_list),log(error_list_euler),1); % calculate fit line
+    mdl_global_euler = polyfit(log(h_list),log(global_truncation_euler),1);
+
+    % Find truncation for explicit midpoint
+    % Cycle through h values
+    for j = 1:length(h_list)
+        [G,num_evals] = explicit_midpoint_step(@rate_func01,t_ex,X0,h_list(j)); % run midpoint step
+        X_midpoint = rate_func01(t_ex+h_list(j), X0); % calculate X(t+h)
+        local_error = norm(G-X_midpoint); % Calculate X(t+h)
+        error_list_midpoint(j) = local_error;
+        num_evals_midpoint = num_evals_midpoint+num_evals; % track number of evals
+        global_truncation_midpoint(i) = sum(error_list_midpoint); % sum error list for global truncation
+
+        % Calculate p
+        order = log10(h_list(i));
+        p_midpoint(i) = log(local_error/order)/log(h_list(i));
+    end
+
+    % mdl_local_midpoint = polyfit(log(h_list),log(error_list_midpoint),1); % calculate fit line
+    mdl_global_midpoint = polyfit(log(h_list),log(global_truncation_midpoint),1); % calculate fit line
+
+    % Plot Euler method local error
+    figure();
+    hold on;
+    loglog(h_list, error_list_euler, 'ro')
+    title('Local truncation Error for Forward Euler', 'Interpreter', 'Latex', 'FontSize', 20)
+    xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    % Plot fit line
+    loglog(h_list, h_list.*mdl_local_euler(1)+h_list.*mdl_local_euler(2), 'b-')
+    legend('Sample Points', 'Fit Line', 'Interpreter', 'Latex')
+    hold off
+    
+    % Plot Euler method global error
+    figure();
+    hold on;
+    loglog(h_list, global_truncation_euler, 'ro')
+    title('Global truncation Error for Forward Euler', 'Interpreter', 'Latex', 'FontSize', 20)
+    xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    % Plot fit line
+    loglog(h_list, h_list.*mdl_global_euler(1)+h_list.*mdl_global_euler(2), 'b-')
+    legend('Sample Points', 'Fit Line', 'Interpreter', 'Latex')
+    hold off
+
+    % Plot Midpoint method global error
+    figure();
+    hold on;
+    loglog(h_list, global_truncation_midpoint, 'ro')
+    title('Global truncation Error for Explicit Midpoint', 'Interpreter', 'Latex', 'FontSize', 20)
+    xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    % Plot fit line
+    loglog(h_list, h_list.*mdl_global_midpoint(1)+h_list.*mdl_global_midpoint(2), 'b-')
+    legend('Sample Points', 'Fit Line', 'Interpreter', 'Latex')
+    hold off
+
+
+end
