@@ -1,6 +1,6 @@
 function plot_local_truncation
     % Plotting parameters
-    h_list = logspace(10e-5, 10, 100);
+    h_list = logspace(-5, -1, 100);
     tspan = [0 10];
     X0 = 1;
     t_ex = 0.492;
@@ -10,25 +10,25 @@ function plot_local_truncation
     global_truncation_euler = zeros(size(h_list));
     error_list_midpoint = zeros(size(h_list));
     global_truncation_midpoint = zeros(size(h_list));
-    num_evals_euler = 0;
-    num_evals_midpoint = 0;
-    p_euler = zeros(size(h_list));
-    p_midpoint = zeros(size(h_list));
-
+    h_avg_list = zeros(size(h_list));
 
     % Find truncation for euler step
     % Cycle through h values
     for i = 1:length(h_list)
-        [G, num_evals] = forward_euler_step(@rate_func01,t_ex,X0,h_list(i)); % run euler step
+        [G, ~] = forward_euler_step(@rate_func01,t_ex,X0,h_list(i)); % run euler step
         X_euler = rate_func01(t_ex+h_list(i), X0); % calculate X(t+h)
         local_error = norm(G-X_euler); % calculate error for local truncation
         error_list_euler(i) = local_error;
-        num_evals_euler = num_evals_euler+num_evals; % track number of evals
-        global_truncation_euler(i) = sum(error_list_euler); % sum error list for global truncation
+
+        [~,X_list,h_avg,num_evals_forward_euler] = ...
+            forward_euler_fixed_step_integration(@rate_func01,tspan,solution01(tspan(1)),h_list(i));
+        h_avg_list(i) = h_avg;
+        global_truncation_euler(i) = norm(X_list(end,:)' - solution01(tspan(end)));
+
 
         % Calculate p
-        order = log10(h_list(i));
-        p_euler(i) = log(local_error/order)/log(h_list(i));
+        % order = log10(h_list(i));
+        % p_euler(i) = log(local_error/order)/log(h_list(i));
     end
     p_euler
     mean(p_euler)
@@ -56,11 +56,11 @@ function plot_local_truncation
 
     % Plot Euler method local error
     figure();
-    hold on;
     loglog(h_list, error_list_euler, 'ro')
     title('Local truncation Error for Forward Euler', 'Interpreter', 'Latex', 'FontSize', 20)
     xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
     ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    hold on;
     % Plot fit line
     loglog(h_list, h_list.*mdl_local_euler(1)+h_list.*mdl_local_euler(2), 'b-')
     legend('Sample Points', 'Fit Line', 'Interpreter', 'Latex')
@@ -68,11 +68,13 @@ function plot_local_truncation
     
     % Plot Euler method global error
     figure();
-    hold on;
+    % hold on;
     loglog(h_list, global_truncation_euler, 'ro')
     title('Global truncation Error for Forward Euler', 'Interpreter', 'Latex', 'FontSize', 20)
     xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
     ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    hold on;
+
     % Plot fit line
     loglog(h_list, h_list.*mdl_global_euler(1)+h_list.*mdl_global_euler(2), 'b-')
     legend('Sample Points', 'Fit Line', 'Interpreter', 'Latex')
@@ -80,11 +82,13 @@ function plot_local_truncation
 
     % Plot Midpoint method global error
     figure();
-    hold on;
+    % hold on;
     loglog(h_list, global_truncation_midpoint, 'ro')
     title('Global truncation Error for Explicit Midpoint', 'Interpreter', 'Latex', 'FontSize', 20)
     xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
     ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    hold on;
+
     % Plot fit line
     loglog(h_list, h_list.*mdl_global_midpoint(1)+h_list.*mdl_global_midpoint(2), 'b-')
     legend('Sample Points', 'Fit Line', 'Interpreter', 'Latex')
