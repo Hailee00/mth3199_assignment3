@@ -30,7 +30,7 @@ function plotting_implicit_midpoint
         'Interpreter', 'Latex', 'FontSize', 20);
 
     legend('Exact','h = 0.4','h = 0.2', ...
-        'Interpreter', 'Latex', 'Location', 'Best', 'FontSize', 15);
+        'Interpreter', 'Latex', 'Location', 'northeast', 'FontSize', 14);
 
     hold off;
 end

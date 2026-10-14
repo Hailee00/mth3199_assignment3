@@ -28,5 +28,5 @@ function plotting
         'Interpreter', 'Latex', 'FontSize', 20);
     legend('Exact',...
         'h = 0.4',...
-        'h = 0.2', 'Interpreter', 'Latex', 'Location', 'Best', 'Fontsize', 15);
+        'h = 0.2', 'Interpreter', 'Latex', 'Location', 'northeast', 'Fontsize', 14);
 end
