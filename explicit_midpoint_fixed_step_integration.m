@@ -30,7 +30,7 @@ explicit_midpoint_fixed_step_integration(rate_func_in,tspan,X0,h_ref)
     
     for i = 1:N
         XA = X_list(i,:)';
-        [XB,evals] = forward_euler_step(rate_func_in,t_list(i),XA,h_avg);
+        [XB,evals] = explicit_midpoint_step(rate_func_in,t_list(i),XA,h_avg);
         X_list(i+1,:) = XB(:)';
         num_evals = num_evals + evals;
     end
