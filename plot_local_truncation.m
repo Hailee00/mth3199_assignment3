@@ -13,6 +13,7 @@ function plot_local_truncation
     global_truncation_midpoint = zeros(size(h_list));
     error_list_diff = zeros(size(h_list));
     h_avg_list = zeros(size(h_list));
+    num_evals_midpoint = 0;
 
     % Find truncation for euler step
     % Cycle through h values
