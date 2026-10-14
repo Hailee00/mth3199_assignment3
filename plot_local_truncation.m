@@ -11,6 +11,7 @@ function plot_local_truncation
     error_list_midpoint = zeros(size(h_list));
     global_truncation_midpoint = zeros(size(h_list));
     h_avg_list = zeros(size(h_list));
+    num_evals_midpoint = 0;
 
     % Find truncation for euler step
     % Cycle through h values
@@ -25,13 +26,9 @@ function plot_local_truncation
         h_avg_list(i) = h_avg;
         global_truncation_euler(i) = norm(X_list(end,:)' - solution01(tspan(end)));
 
-
-        % Calculate p
-        % order = log10(h_list(i));
-        % p_euler(i) = log(local_error/order)/log(h_list(i));
     end
-    p_euler
-    mean(p_euler)
+
+    [p_euler,k_euler] = generate_error_fit(h_list, error_list_euler)
 
     mdl_local_euler = polyfit(log(h_list),log(error_list_euler),1); % calculate fit line
     mdl_global_euler = polyfit(log(h_list),log(global_truncation_euler),1);
@@ -48,15 +45,18 @@ function plot_local_truncation
 
         % Calculate p
         order = log10(h_list(i));
-        p_midpoint(i) = log(local_error/order)/log(h_list(i));
+
     end
+
+    [p_midpoint,k_midpoint] = generate_error_fit(h_list, error_list_midpoint)
+
 
     % mdl_local_midpoint = polyfit(log(h_list),log(error_list_midpoint),1); % calculate fit line
     mdl_global_midpoint = polyfit(log(h_list),log(global_truncation_midpoint),1); % calculate fit line
 
     % Plot Euler method local error
     figure();
-    loglog(h_list, error_list_euler, 'ro')
+    loglog(h_list, error_list_euler, 'r.')
     title('Local truncation Error for Forward Euler', 'Interpreter', 'Latex', 'FontSize', 20)
     xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
     ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
@@ -69,7 +69,7 @@ function plot_local_truncation
     % Plot Euler method global error
     figure();
     % hold on;
-    loglog(h_list, global_truncation_euler, 'ro')
+    loglog(h_list, global_truncation_euler, 'r.')
     title('Global truncation Error for Forward Euler', 'Interpreter', 'Latex', 'FontSize', 20)
     xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
     ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
