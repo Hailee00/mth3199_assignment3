@@ -14,6 +14,8 @@ function plot_local_truncation
     error_list_diff = zeros(size(h_list));
     h_avg_list = zeros(size(h_list));
     num_evals_midpoint = 0;
+    num_evals_euler_list = zeros(size(h_list));
+    num_evals_midpoint_list = zeros(size(h_list));
 
     % Find truncation for euler step
     % Cycle through h values
@@ -27,6 +29,7 @@ function plot_local_truncation
         [~,X_list,h_avg,num_evals_forward_euler] = ...
             forward_euler_fixed_step_integration(@rate_func01,tspan,solution01(tspan(1)),h_list(i));
         h_avg_list(i) = h_avg;
+        num_evals_euler_list(i) = num_evals_forward_euler;
         global_truncation_euler(i) = norm(X_list(end,:)' - solution01(tspan(end)));
 
     end
@@ -44,8 +47,9 @@ function plot_local_truncation
         X_midpoint = solution01(t_ex+h_list(j)); % calculate X(t+h)
         error_list_midpoint(j) = norm(G-X_midpoint);
         
-        [~, X_list, ~, ~] = explicit_midpoint_fixed_step_integration(@rate_func01,tspan,solution01(tspan(1)),h_list(j));
+        [~, X_list, ~, num_evals_mid] = explicit_midpoint_fixed_step_integration(@rate_func01,tspan,solution01(tspan(1)),h_list(j));
         global_truncation_midpoint(j) = norm(X_list(end,:)' - solution01(tspan(end)));
+        num_evals_midpoint_list(j) = num_evals_mid;
 
     %     local_error = norm(G-X_midpoint); % Calculate X(t+h)
     %     error_list_midpoint(j) = local_error;
@@ -61,6 +65,11 @@ function plot_local_truncation
     mdl_global_midpoint = polyfit(log(h_list(idx)),log(global_truncation_midpoint(idx)),1); % calculate fit line
     p_local_midpoint = mdl_local_midpoint(1);
     p_local_diff = mdl_local_diff(1);
+
+    mdl_evals_euler = polyfit(log(num_evals_euler_list(idx)), log(global_truncation_euler(idx)), 1);
+    mdl_evals_midpoint = polyfit(log(num_evals_midpoint_list(idx)), log(global_truncation_midpoint(idx)), 1);
+    p_evals_euler = mdl_evals_euler(1);
+    p_evals_midpoint = mdl_evals_midpoint(1); 
     
     % Plot Euler method local error for all methods
     figure();
@@ -68,12 +77,12 @@ function plot_local_truncation
     hold on;
     loglog(h_list, error_list_midpoint, 'bs')
     loglog(h_list, error_list_diff, 'k^')
-    loglog(h_list, exp(polyval(mdl_local_euler, log(h_list))), 'r-')      % FIX: fit line is exp(polyval(...))
+    loglog(h_list, exp(polyval(mdl_local_euler, log(h_list))), 'r-')      
     loglog(h_list, exp(polyval(mdl_local_midpoint, log(h_list))), 'b-')
     loglog(h_list, exp(polyval(mdl_local_diff, log(h_list))), 'k-')
-    title('Local truncation Error', 'Interpreter', 'Latex', 'FontSize', 20)
-    xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
-    ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    title('Local Truncation Error', 'Interpreter', 'Latex', 'FontSize', 22)
+    xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 18)
+    ylabel('Local Truncation Error (-)', 'Interpreter', 'Latex', 'FontSize', 18)
     legend('Forward Euler', 'Explicit Midpoint', '$|X(t+h)-X(t)|$', 'FE fit', 'EM fit', 'Diff fit', ...
         'Interpreter', 'Latex', 'Location', 'northwest')
     hold off
@@ -81,24 +90,40 @@ function plot_local_truncation
     % Plot Euler method global error
     figure();
     loglog(h_list, global_truncation_euler, 'ro')
-    title('Global truncation Error for Forward Euler', 'Interpreter', 'Latex', 'FontSize', 20)
-    xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
-    ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
     hold on;
-    loglog(h_list, exp(polyval(mdl_global_euler, log(h_list))), 'b-')   % FIX: same fit line fix
-    legend('Sample Points', 'Fit Line', 'Interpreter', 'Latex')
-    hold off
-
-    % Plot Midpoint method global error
-    figure();
-    loglog(h_list, global_truncation_midpoint, 'ro')
-    title('Global truncation Error for Explicit Midpoint', 'Interpreter', 'Latex', 'FontSize', 20)
-    xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
-    ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    title('Global Truncation Error vs. Step Size', 'Interpreter', 'Latex', 'FontSize', 22)
+    xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 18)
+    ylabel('Global Truncation Error (-)', 'Interpreter', 'Latex', 'FontSize', 18)
     hold on;
+    loglog(h_list, exp(polyval(mdl_global_euler, log(h_list))), 'r-')  
+    loglog(h_list, global_truncation_midpoint, 'bo')
     loglog(h_list, exp(polyval(mdl_global_midpoint, log(h_list))), 'b-')
-    legend('Sample Points', 'Fit Line', 'Interpreter', 'Latex')
+    legend('Forward Euler', 'Forward Euler Fit','Explicit Midpoint','Explicit Midpoint Fit', 'Interpreter', 'Latex', 'Location', 'northwest')
     hold off
 
+    % % Plot Midpoint method global error
+    % figure();
+    % loglog(h_list, global_truncation_midpoint, 'ro')
+    % title('Global truncation Error for Explicit Midpoint', 'Interpreter', 'Latex', 'FontSize', 20)
+    % xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    % ylabel('Error Size (-)', 'Interpreter', 'Latex', 'FontSize', 15)
+    % hold on;
+    % loglog(h_list, exp(polyval(mdl_global_midpoint, log(h_list))), 'b-')
+    % legend('Sample Points', 'Fit Line', 'Interpreter', 'Latex')
+    % hold off
 
+%plot global truncation w/ rate functions
+evals_fit_euler = num_evals_euler_list(idx);
+evals_fit_midpoint =num_evals_midpoint_list(idx);
+  figure();
+  loglog(num_evals_euler_list, global_truncation_euler, 'ro', 'MarkerSize', 6)
+  hold on;
+  loglog(num_evals_midpoint_list, global_truncation_midpoint, 'bo', 'MarkerSize', 6)
+  loglog(evals_fit_euler, exp(polyval(mdl_evals_euler, log(evals_fit_euler))), 'r-', 'LineWidth', 2)
+  loglog(evals_fit_midpoint, exp(polyval(mdl_evals_midpoint, log(evals_fit_midpoint))), 'b-', 'LineWidth', 2)
+  title('Global Truncation Error vs. Rate Function Calls', 'Interpreter', 'Latex', 'FontSize', 20)
+  xlabel('Rate Function Calls (-)', 'Interpreter', 'Latex', 'FontSize', 18)
+  ylabel('Global Truncation Error (-)', 'Interpreter', 'Latex', 'FontSize', 18)
+  legend('Forward Euler', 'Explicit Midpoint', 'Forward Euler Fit', 'Explicit Method Fit','Interpreter', 'Latex', 'FontSize', 14, 'Location', 'northeast')
+    hold off
 end
