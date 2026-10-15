@@ -1,4 +1,4 @@
-function plot_local_truncation
+% function plot_local_truncation
     % Plotting parameters
     h_list = logspace(-5, -1, 100);
     tspan = [0 10];
@@ -51,14 +51,6 @@ function plot_local_truncation
         global_truncation_midpoint(j) = norm(X_list(end,:)' - solution01(tspan(end)));
         num_evals_midpoint_list(j) = num_evals_mid;
 
-    %     local_error = norm(G-X_midpoint); % Calculate X(t+h)
-    %     error_list_midpoint(j) = local_error;
-    %     num_evals_midpoint = num_evals_midpoint+num_evals; % track number of evals
-    %     global_truncation_midpoint(i) = sum(error_list_midpoint); % sum error list for global truncation
-    % 
-    %     % Calculate p
-    %     order = log10(h_list(i));
-    %     p_midpoint(i) = log(local_error/order)/log(h_list(i));
     end
 
     mdl_local_midpoint = polyfit(log(h_list(idx)),log(error_list_midpoint(idx)),1); % calculate fit line
@@ -126,4 +118,4 @@ evals_fit_midpoint =num_evals_midpoint_list(idx);
   ylabel('Global Truncation Error (-)', 'Interpreter', 'Latex', 'FontSize', 18)
   legend('Forward Euler', 'Explicit Midpoint', 'Forward Euler Fit', 'Explicit Method Fit','Interpreter', 'Latex', 'FontSize', 14, 'Location', 'northeast')
     hold off
-end
+% end
