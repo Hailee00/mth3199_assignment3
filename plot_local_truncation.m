@@ -1,10 +1,10 @@
-% function plot_local_truncation
+function plot_local_truncation
     % Plotting parameters
     h_list = logspace(-5, -1, 100);
     tspan = [0 10];
     X0 = 1;
     t_ex = 0.492;
-    X_ex = solution01(t_ex);
+    X_ex = solution02(t_ex);
 
     % Initialize variables for loop
     error_list_euler = zeros(size(h_list));
@@ -20,17 +20,17 @@
     % Find truncation for euler step
     % Cycle through h values
     for i = 1:length(h_list)
-        [G, ~] = forward_euler_step(@rate_func01,t_ex,X_ex,h_list(i)); % run euler step
-        X_euler = solution01(t_ex+h_list(i)); % calculate X(t+h)
+        [G, ~] = forward_euler_step(@rate_func02,t_ex,X_ex,h_list(i)); % run euler step
+        X_euler = solution02(t_ex+h_list(i)); % calculate X(t+h)
         local_error = norm(G-X_euler); % calculate error for local truncation
         error_list_euler(i) = local_error;
         error_list_diff(i) = norm(X_euler-X_ex);
 
         [~,X_list,h_avg,num_evals_forward_euler] = ...
-            forward_euler_fixed_step_integration(@rate_func01,tspan,solution01(tspan(1)),h_list(i));
+            forward_euler_fixed_step_integration(@rate_func02,tspan,solution02(tspan(1)),h_list(i));
         h_avg_list(i) = h_avg;
         num_evals_euler_list(i) = num_evals_forward_euler;
-        global_truncation_euler(i) = norm(X_list(end,:)' - solution01(tspan(end)));
+        global_truncation_euler(i) = norm(X_list(end,:)' - solution02(tspan(end)));
 
     end
 
@@ -43,12 +43,12 @@
     % Find truncation for explicit midpoint
     % Cycle through h values
     for j = 1:length(h_list)
-        [G,~] = explicit_midpoint_step(@rate_func01,t_ex,X_ex,h_list(j)); % run midpoint step
-        X_midpoint = solution01(t_ex+h_list(j)); % calculate X(t+h)
+        [G,~] = explicit_midpoint_step(@rate_func02,t_ex,X_ex,h_list(j)); % run midpoint step
+        X_midpoint = solution02(t_ex+h_list(j)); % calculate X(t+h)
         error_list_midpoint(j) = norm(G-X_midpoint);
         
-        [~, X_list, ~, num_evals_mid] = explicit_midpoint_fixed_step_integration(@rate_func01,tspan,solution01(tspan(1)),h_list(j));
-        global_truncation_midpoint(j) = norm(X_list(end,:)' - solution01(tspan(end)));
+        [~, X_list, ~, num_evals_mid] = explicit_midpoint_fixed_step_integration(@rate_func02,tspan,solution02(tspan(1)),h_list(j));
+        global_truncation_midpoint(j) = norm(X_list(end,:)' - solution02(tspan(end)));
         num_evals_midpoint_list(j) = num_evals_mid;
 
     end
@@ -118,4 +118,4 @@ evals_fit_midpoint =num_evals_midpoint_list(idx);
   ylabel('Global Truncation Error (-)', 'Interpreter', 'Latex', 'FontSize', 18)
   legend('Forward Euler', 'Explicit Midpoint', 'Forward Euler Fit', 'Explicit Method Fit','Interpreter', 'Latex', 'FontSize', 14, 'Location', 'northeast')
     hold off
-% end
+end
