@@ -67,7 +67,7 @@ function plot_local_truncation_all_
         global_truncation_midpoint_im(i) = norm(X_list(end,:)' - solution01(tspan(end)));
     end
 
-
+    % Find local p values
     idx = h_list>= 1e-3 & h_list<=1e-1;
     mdl_local_euler_f = polyfit(log(h_list(idx)), log(error_list_euler_f(idx)),1);
     mdl_local_euler_b = polyfit(log(h_list(idx)), log(error_list_euler_b(idx)),1);
@@ -81,6 +81,18 @@ function plot_local_truncation_all_
     p_local_midpoint_im = mdl_local_midpoint_im(1)
     p_local_diff = mdl_local_diff(1)
 
+    % Find global p values
+    mdl_global_euler_f = polyfit(log(h_list(idx)), log(global_truncation_euler_f(idx)),1);
+    mdl_global_euler_b = polyfit(log(h_list(idx)), log(global_truncation_euler_b(idx)),1);
+    mdl_global_midpoint_ex = polyfit(log(h_list(idx)), log(global_truncation_midpoint_ex(idx)),1);
+    mdl_global_midpoint_im = polyfit(log(h_list(idx)), log(global_truncation_midpoint_im(idx)),1);
+
+    p_global_euler_f = mdl_global_euler_f(1)
+    p_global_euler_b = mdl_global_euler_b(1)
+    p_global_midpoint_ex = mdl_global_midpoint_ex(1)
+    p_global_midpoint_im = mdl_global_midpoint_im(1)
+
+    
     % Plot local truncation error for all methods
     figure();
     loglog(h_list, error_list_euler_f, 'ro')
