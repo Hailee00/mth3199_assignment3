@@ -30,7 +30,7 @@ function plotting_midpoint_step
     title('Explicit Midpoint Example Integration Plot', ...
         'Interpreter', 'Latex', 'FontSize', 20);
     legend('Exact',...
-        '$h = 0.28$', '$h = 0.425$', '$h = 45$', 'Interpreter', 'Latex', 'Location', 'southwest', 'Fontsize', 15);
+        '$h = 0.38$', '$h = 0.425$', '$h = 45$', 'Interpreter', 'Latex', 'Location', 'southwest', 'Fontsize', 15);
 
     myfig = gcf(); %set myfig to the current figure
   % exportgraphics(myfig , 'explicit_mdpt_plot.png', 'Resolution', 600); %saves plot to plot_name at high resolution

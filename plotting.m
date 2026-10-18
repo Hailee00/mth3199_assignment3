@@ -28,11 +28,12 @@ function plotting
     ylabel('$x(t) (-)$', 'Interpreter', 'Latex', 'FontSize', 18);
     title('Forward Euler Example Integration Plot', ...
         'Interpreter', 'Latex', 'FontSize', 22);
+    
     legend('Exact',...
-        '$h = 0.28$', '$h = 0.425$', '$h = 45$', 'Interpreter', 'Latex', 'Location', 'southwest', 'Fontsize', 13);
+        '$h = 0.38$', '$h = 0.425$', '$h = 45$', 'Interpreter', 'Latex', 'Location', 'southwest', 'Fontsize', 13);
 
    myfig = gcf(); %set myfig to the current figure
-   %exportgraphics(myfig , 'forward_euler_plot.png', 'Resolution', 600); %saves plot to plot_name at high resolution
+   exportgraphics(myfig , 'forward_euler_plot.png', 'Resolution', 600); %saves plot to plot_name at high resolution
 
    
 end
