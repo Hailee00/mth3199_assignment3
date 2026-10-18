@@ -2,7 +2,7 @@
 function plotting_backward_euler
     tspan = [0 10];
     X0 = 1;
-    h_values = [0.4, 0.2];
+    h_values = [0.25, 0.85, 2];
 
     t_exact = linspace(tspan(1),tspan(2),1000);
     X_exact = solution01(t_exact);
@@ -20,17 +20,19 @@ function plotting_backward_euler
             @backward_euler_step,...
             tspan,X0,h_values(i));
 
-        plot(t_list,X_list,'o-');
+         plot(t_list,X_list,'.-', 'MarkerSize', 20, 'LineWidth', 1.5);
 
     end
+    
+    set(gca, 'TickLabelInterpreter', 'latex', 'FontSize', 12);
 
-    xlabel('Time (-)', 'Interpreter', 'Latex', 'FontSize', 15);
-    ylabel('x(t) (-)', 'Interpreter', 'Latex', 'FontSize', 15);
+    xlabel('Time (-)', 'Interpreter', 'Latex', 'FontSize', 18);
+    ylabel('$x(t) (-)$', 'Interpreter', 'Latex', 'FontSize', 18);
     title('Backward Euler Example Integration Plot', ...
-        'Interpreter', 'Latex', 'FontSize', 20);
+        'Interpreter', 'Latex', 'FontSize', 22);
 
-    legend('Exact','h = 0.4','h = 0.2', ...
-        'Interpreter', 'Latex', 'Location', 'northeast', 'FontSize', 12);
+   legend('Exact',...
+        '$h = 0.25$', '$h = 0.85$', '$h = 2.0$', 'Interpreter', 'Latex', 'Location', 'northeast', 'Fontsize', 13);
 
     hold off;
 end
