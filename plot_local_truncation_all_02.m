@@ -95,11 +95,11 @@ function plot_local_truncation_all_02
     
     % Plot local truncation error for all methods
     figure();
-    loglog(h_list, error_list_euler_f, 'ro')
+    loglog(h_list, error_list_euler_f, 'b.', 'MarkerSize', 20)
     hold on;
-    loglog(h_list, error_list_euler_b, 'ms')
-    loglog(h_list, error_list_midpoint_ex, 'bs')
-    loglog(h_list, error_list_midpoint_im, 'gd')
+    loglog(h_list, error_list_euler_b, 'r.', 'MarkerSize', 10)
+    loglog(h_list, error_list_midpoint_ex, 'c.', 'MarkerSize',15)
+    loglog(h_list, error_list_midpoint_im, 'g.', 'MarkerSize',15)
 
     title('Local Truncation Error', ...
         'Interpreter', 'Latex', 'FontSize', 22)
@@ -110,47 +110,52 @@ function plot_local_truncation_all_02
 
     legend('Forward Euler', 'Backward Euler', 'Explicit Midpoint', 'Implicit Midpoint', ...
         'Interpreter', 'Latex', 'Location', 'northwest')
+    set(gca, 'FontSize', 12)
     hold off
 
     % Plot global error vs step size
     figure();
-    loglog(h_list, global_truncation_euler_f, 'ro')
+    loglog(h_list, global_truncation_euler_f, 'b.', 'MarkerSize', 20)
     hold on;
-    loglog(h_list, global_truncation_euler_b, 'ms')
-    loglog(h_list, global_truncation_midpoint_ex, 'bs')
-    loglog(h_list, global_truncation_midpoint_im, 'gd')
+    loglog(h_list, global_truncation_euler_b, 'r.', 'MarkerSize', 10)
+    loglog(h_list, global_truncation_midpoint_ex, 'c.', 'MarkerSize',15)
+    loglog(h_list, global_truncation_midpoint_im, 'g.', 'MarkerSize',15)
 
-    title('Global Error vs Step Size', ...
+    title('Global Truncation Error vs Step Size', ...
         'Interpreter', 'Latex', 'FontSize', 22)
     xlabel('Step Size: h (-)', ...
         'Interpreter', 'Latex', 'FontSize', 18)
-    ylabel('Global Error (-)', ...
+    ylabel('Global Truncation Error (-)', ...
         'Interpreter', 'Latex', 'FontSize', 18)
 
     legend('Forward Euler', 'Backward Euler', ...
         'Explicit Midpoint', 'Implicit Midpoint', ...
-        'Interpreter', 'Latex', 'Location', 'northwest')
+        'Interpreter', 'Latex', 'Location', 'southeast')
+    set(gca, 'FontSize', 14)
     hold off
 
 
     % Plot global error vs rate function calls
     figure();
-    loglog(num_evals_euler_list_f, global_truncation_euler_f, 'ro')
+    loglog(num_evals_euler_list_f, global_truncation_euler_f,  'b.', 'MarkerSize', 15)
     hold on;
-    loglog(num_evals_euler_list_b, global_truncation_euler_b, 'ms')
-    loglog(num_evals_midpoint_list_ex, global_truncation_midpoint_ex, 'bs')
-    loglog(num_evals_midpoint_list_im, global_truncation_midpoint_im, 'gd')
+    loglog(num_evals_euler_list_b, global_truncation_euler_b, 'r.', 'MarkerSize', 15)
+    loglog(num_evals_midpoint_list_ex, global_truncation_midpoint_ex, 'c.', 'MarkerSize',15)
+    loglog(num_evals_midpoint_list_im, global_truncation_midpoint_im, 'g.', 'MarkerSize',15)
 
-    title('Global Error vs Rate Function Calls', ...
+    title('Global Truncation Error vs Rate Function Calls', ...
         'Interpreter', 'Latex', 'FontSize', 22)
     xlabel('Number of Rate Function Calls (-)', ...
         'Interpreter', 'Latex', 'FontSize', 18)
-    ylabel('Global Error (-)', ...
+    ylabel('Global Truncation Error (-)', ...
         'Interpreter', 'Latex', 'FontSize', 18)
 
     legend('Forward Euler', 'Backward Euler', ...
         'Explicit Midpoint', 'Implicit Midpoint', ...
-        'Interpreter', 'Latex', 'Location', 'northwest')
+        'Interpreter', 'Latex', 'Location', 'southwest', 'Fontsize', 14)
+    set(gca, 'FontSize', 14)
+    ylim([1e-8 1e0])
+    xlim([1e2, 10^6])
     hold off
 
 
