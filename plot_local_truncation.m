@@ -62,16 +62,22 @@ function plot_local_truncation
     mdl_evals_midpoint = polyfit(log(num_evals_midpoint_list(idx)), log(global_truncation_midpoint(idx)), 1);
     p_evals_euler = mdl_evals_euler(1);
     p_evals_midpoint = mdl_evals_midpoint(1); 
-    
+
     % Plot Euler method local error for all methods
     figure();
-    loglog(h_list, error_list_euler, 'ro')
+    loglog(h_list, error_list_euler, '.', 'MarkerSize', 20)
     hold on;
-    loglog(h_list, error_list_midpoint, 'bs')
-    loglog(h_list, error_list_diff, 'k^')
-    loglog(h_list, exp(polyval(mdl_local_euler, log(h_list))), 'r-')      
-    loglog(h_list, exp(polyval(mdl_local_midpoint, log(h_list))), 'b-')
-    loglog(h_list, exp(polyval(mdl_local_diff, log(h_list))), 'k-')
+    loglog(h_list, error_list_midpoint, '.', 'MarkerSize', 20)
+    loglog(h_list, error_list_diff, '.', 'MarkerSize', 20)
+    loglog(h_list, exp(polyval(mdl_local_euler, log(h_list))), 'r-', 'Linewidth', 1.5)      
+    loglog(h_list, exp(polyval(mdl_local_midpoint, log(h_list))), 'g-', 'Linewidth', 1.5)
+    loglog(h_list, exp(polyval(mdl_local_diff, log(h_list))), 'k-','Linewidth', 1.5)
+
+    y_limits = ylim;
+    y_min = ceil(log10(y_limits(1))/2)*2;
+    y_max = floor(log10(y_limits(2))/2)*2;
+    ax.YTick = 10.^(y_min:2:y_max);
+
     title('Local Truncation Error', 'Interpreter', 'Latex', 'FontSize', 22)
     xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 18)
     ylabel('Local Truncation Error (-)', 'Interpreter', 'Latex', 'FontSize', 18)
@@ -81,15 +87,26 @@ function plot_local_truncation
 
     % Plot Euler method global error
     figure();
-    loglog(h_list, global_truncation_euler, 'ro')
+    loglog(h_list, global_truncation_euler, '.', 'MarkerSize', 20)
     hold on;
+
+
+    ax = gca;
+    ax.FontSize = 12;
+
+
     title('Global Truncation Error vs. Step Size', 'Interpreter', 'Latex', 'FontSize', 22)
     xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 18)
     ylabel('Global Truncation Error (-)', 'Interpreter', 'Latex', 'FontSize', 18)
     hold on;
-    loglog(h_list, exp(polyval(mdl_global_euler, log(h_list))), 'r-')  
-    loglog(h_list, global_truncation_midpoint, 'bo')
-    loglog(h_list, exp(polyval(mdl_global_midpoint, log(h_list))), 'b-')
+    loglog(h_list, exp(polyval(mdl_global_euler, log(h_list))), 'r-', 'Linewidth', 1.5)  
+    loglog(h_list, global_truncation_midpoint, '.', 'MarkerSize', 20)
+    loglog(h_list, exp(polyval(mdl_global_midpoint, log(h_list))), 'k-', 'Linewidth', 1.5)
+
+    y_limits = ylim;
+    y_min = ceil(log10(y_limits(1))/2)*2;
+    y_max = floor(log10(y_limits(2))/2)*2;
+    ax.YTick = 10.^(y_min:2:y_max);
     legend('Forward Euler', 'Forward Euler Fit','Explicit Midpoint','Explicit Midpoint Fit', 'Interpreter', 'Latex', 'Location', 'northwest')
     hold off
 
@@ -107,12 +124,26 @@ function plot_local_truncation
 %plot global truncation w/ rate functions
 evals_fit_euler = num_evals_euler_list(idx);
 evals_fit_midpoint =num_evals_midpoint_list(idx);
+
   figure();
-  loglog(num_evals_euler_list, global_truncation_euler, 'ro', 'MarkerSize', 6)
+  
+  loglog(num_evals_euler_list, global_truncation_euler, '.', 'MarkerSize', 20)
   hold on;
-  loglog(num_evals_midpoint_list, global_truncation_midpoint, 'bo', 'MarkerSize', 6)
-  loglog(evals_fit_euler, exp(polyval(mdl_evals_euler, log(evals_fit_euler))), 'r-', 'LineWidth', 2)
-  loglog(evals_fit_midpoint, exp(polyval(mdl_evals_midpoint, log(evals_fit_midpoint))), 'b-', 'LineWidth', 2)
+  loglog(num_evals_midpoint_list, global_truncation_midpoint, '.', 'MarkerSize', 20)
+
+
+  fit_euler = linspace(min(num_evals_euler_list), max(num_evals_euler_list), 200);
+  fit_midpoint = linspace(min(num_evals_midpoint_list), max(num_evals_midpoint_list), 200);
+  loglog(fit_euler, exp(polyval(mdl_evals_euler, log(fit_euler))), 'r-', 'LineWidth', 2);
+  loglog(fit_midpoint, exp(polyval(mdl_evals_midpoint, log(fit_midpoint))), 'b-', 'LineWidth', 2);
+
+  ax = gca;
+  ax.FontSize = 12;
+  y_limits = ylim;
+  y_min = ceil(log10(y_limits(1))/2)*2;
+  y_max = floor(log10(y_limits(2))/2)*2;
+  ax.YTick = 10.^(y_min:2:y_max);
+  xlim([0 2000000])
   title('Global Truncation Error vs. Rate Function Calls', 'Interpreter', 'Latex', 'FontSize', 20)
   xlabel('Rate Function Calls (-)', 'Interpreter', 'Latex', 'FontSize', 18)
   ylabel('Global Truncation Error (-)', 'Interpreter', 'Latex', 'FontSize', 18)
