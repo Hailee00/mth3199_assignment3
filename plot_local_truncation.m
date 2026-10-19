@@ -82,7 +82,7 @@ function plot_local_truncation
     xlabel('Step Size: h (-)', 'Interpreter', 'Latex', 'FontSize', 18)
     ylabel('Local Truncation Error (-)', 'Interpreter', 'Latex', 'FontSize', 18)
     legend('Forward Euler', 'Explicit Midpoint', '$|X(t+h)-X(t)|$', 'FE fit', 'EM fit', 'Diff fit', ...
-        'Interpreter', 'Latex', 'Location', 'northwest')
+        'Interpreter', 'Latex', 'Location', 'southeast')
     hold off
 
     % Plot Euler method global error
